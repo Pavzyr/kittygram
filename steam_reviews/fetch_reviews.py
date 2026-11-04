@@ -45,6 +45,9 @@ def get_json(url, params, retries=6):
         try:
             req = urllib.request.Request(full, headers={"User-Agent": UA})
             with urllib.request.urlopen(req, timeout=30) as r:
+                if r.geturl().split("?")[0] != url:
+                    sys.exit(f"Steam redirected {url} -> {r.geturl()}: it refuses this network. "
+                             "Run the script from a regular home/office connection.")
                 return json.loads(r.read().decode("utf-8"))
         except Exception as e:  # network hiccup / 429
             wait = 2 ** attempt
